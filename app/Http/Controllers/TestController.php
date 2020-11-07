@@ -77,28 +77,11 @@ class TestController extends Controller
             $xml_data = file_get_contents('php://input');
             file_put_contents('wx_event.log', $xml_data);
             $data = simplexml_load_string($xml_data, 'SimpleXMLElement', LIBXML_NOCDATA);
-            if ($data->MsgType == 'event') {
-                if ($data->Event == 'subscribe') {
-                    $ToUserName = $data->FromUserName;
-                    $FromUserName = $data->ToUserName;
-                    $CreateTime = time();
-                    $MsgType = "text";
-                    $array = ['欢迎关注'];
-                    $Content = $array[array_rand($array)];
-                    $xml = "<xml>
-                                <ToUserName><![CDATA[%s]]></ToUserName>
-                                <FromUserName><![CDATA[%s]]></FromUserName>
-                                <CreateTime>%s</CreateTime>
-                                <MsgType><![CDATA[%s]]></MsgType>
-                                <Event><![CDATA[%s]]></Event>
-                                <Content><![CDATA[" . $Content . "]]></Content>
-                            </xml>";
-                    echo sprintf($xml, $ToUserName, $FromUserName, $CreateTime, $MsgType, $Content);
-                }
+
 
             } else {
                 echo "";
             }
         }
-    }
+    
 }

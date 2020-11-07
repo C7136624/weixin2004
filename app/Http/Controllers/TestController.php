@@ -76,12 +76,12 @@ class TestController extends Controller
         if ($tmpStr == $signature) {
             $xml_data = file_get_contents('php://input');
             file_put_contents('wx_event.log', $xml_data);
-            $data = simplexml_load_string($xml_data, 'SimpleXMLElement', LIBXML_NOCDATA);
+            
 
 
             } else {
                 echo "";
             }
         }
-    
+
 }

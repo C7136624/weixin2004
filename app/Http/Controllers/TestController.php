@@ -101,6 +101,6 @@ class TestController extends Controller
                 <MsgType><![CDATA[%s]]></MsgType>
                 <Content><![CDATA[%s]]></Content>
             </xml>";
-        echo sprintf($ret,$ToUserName,$FromUserName,$time,$text,$Content);
+        return sprintf($ret,$ToUserName,$FromUserName,$time,$text,$Content);
     }
 }

@@ -72,6 +72,8 @@ class TestController extends Controller
                 if ($data->MsgType=='event'){
                     if ($data->Event=='subscribe'){
                         $Content ="欢迎再次关注成功";
+                        file_put_contents('wx_event.log',$Content);
+
                         $result = $this->infocodl($data,$Content);
                         return $result;
                     }

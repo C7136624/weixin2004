@@ -67,7 +67,7 @@ class TestController extends Controller
         if( $tmpStr == $signature ){
             //接受数据
             $xml_data=file_get_contents('php://input');
-            file_put_contents('wx_event.log',$xml_data);
+//            file_put_contents('wx_event.log',$xml_data);
             $data=simplexml_load_string($xml_data);
             if ($data->MsgType=='event'){
                 if ($data->Event=='subscribe'){
@@ -90,7 +90,7 @@ class TestController extends Controller
     {
         $ToUserName=$postarray->FromUserName;//接收对方账号
         $FromUserName=$postarray->ToUserName;//接收开发者微信
-        file_put_contents('log.logs',$ToUserName);
+//        file_put_contents('log.logs',$ToUserName);
 
         $time=time();//接受时间
         $text='text';//数据类型

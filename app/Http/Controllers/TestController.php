@@ -7,15 +7,8 @@ use Illuminate\Support\Facades\Redis;
 
 class TestController extends Controller
 {
-    public function index(){
-        $echoStr =request()->get("echostr","");
-        if($this->checkSignature() && !empty($echoStr)){
-            //至少微信公众平台第一次接入调用走这个
-            echo $echoStr;
 
-        }
-    }
-    private function checkSignature()
+    private function index()
     {
         $signature = $_GET["signature"];
         $timestamp = $_GET["timestamp"];
@@ -64,7 +57,7 @@ class TestController extends Controller
         $timestamp = request()->get("timestamp");
         $nonce = request()->get("nonce");
 
-        $token = "Token";
+        $token = "woainimen";
         $tmpArr = array($token, $timestamp, $nonce);
         sort($tmpArr, SORT_STRING);
         $tmpStr = implode( $tmpArr );

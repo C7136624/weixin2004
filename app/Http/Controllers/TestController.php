@@ -64,31 +64,24 @@ class TestController extends Controller
         $tmpStr = sha1( $tmpStr );
 
 
-            if( $tmpStr == $signature ){
-                //接受数据
-                $xml_data=file_get_contents('php://input');
-                file_put_contents('wx_event.log',$xml_data);
-                $data=simplexml_load_string($xml_data);
-                $Content ="欢迎再次关注成功";
-//                file_put_contents('wx_event.log',$Content);
-    
-                $result = $this->infocodl($data,$Content);
-                return $result;
-                if ($data->MsgType=='event'){
-                    if ($data->Event=='subscribe'){
-                        $Content ="欢迎再次关注成功";
-                        file_put_contents('wx_event.log',$Content);
-
-                        $result = $this->infocodl($data,$Content);
-                        return $result;
-                    }
+        if( $tmpStr == $signature ){
+            //接受数据
+            $xml_data=file_get_contents('php://input');
+            file_put_contents('wx_event.log',$xml_data);
+            $data=simplexml_load_string($xml_data);
+            if ($data->MsgType=='event'){
+                if ($data->Event=='subscribe'){
+                    $Content ="欢迎再次关注成功";
+                    $result = $this->infocodl($data,$Content);
+                    return $result;
                 }
-
-
-
-            }else{
-                echo "";
             }
+
+
+
+        }else{
+            echo "";
+        }
 
 
     }

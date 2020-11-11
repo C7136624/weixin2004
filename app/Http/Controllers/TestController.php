@@ -133,8 +133,8 @@ class TestController extends Controller
             'button' => [
                 [
                     'type' => 'view',
-                    'name' => 'du',
-                    'url' => 'https://www.baidu.com'
+                    'name' => '天气',
+                    'url' => 'http://2004wlc.wx.comcto.com/weater'
                 ],
                 [
                     'type' => 'click',

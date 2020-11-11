@@ -179,7 +179,7 @@ class TestController extends Controller
 
     }
 
-    public function weater(){
+    public function Weater(){
         $key = "577cef88286449eb9a5010194e9a2473";
         $url = "https://devapi.qweather.com/v7/weather/now?location=101010100&key=$key&gzip=n";
         $red = $this->curl($url);

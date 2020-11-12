@@ -102,8 +102,7 @@ class TestController extends Controller
                     $u = Wxuser::where('openid',$openid)->first();
                     if($u){
                         $Content ="欢迎回来";
-                        $result = $this->infocodl($data,$Content);
-                        return $result;
+
                     }else{
                         $token = $this->getAccessToken();
                         $url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$token.'&openid='.$openid.'&lang=zh_CN';
@@ -119,9 +118,10 @@ class TestController extends Controller
                         ];
                         $res = Wxuser::insertGetId($data);
                         $Content ="关注成功";
-                        $result = $this->infocodl($data,$Content);
-                        return $result;
+
                     }
+                    $result = $this->infocodl($data,$Content);
+                    return $result;
                 }
             }
             // 回复天气

@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use GuzzleHttp\Client;
+use App\Wxuser;
 
 class TestController extends Controller
 {
-
     private function index()
     {
         $signature = $_GET["signature"];
@@ -98,10 +98,38 @@ class TestController extends Controller
             $data=simplexml_load_string($xml_data);
             if ($data->MsgType=='event'){
                 if ($data->Event=='subscribe'){
-                    $Content ="关注成功";
-                    $result = $this->infocodl($data,$Content);
-                    return $result;
+                    $openid=$data->FromUserName;//接收对方账号
+                    $u = Wxuser::where('openid',$openid)->first();
+                    if($u){
+                        $Content ="欢迎回来";
+                        $result = $this->infocodl($data,$Content);
+                        return $result;
+                    }else{
+                        $token = $this->getAccessToken();
+                        $url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$token.'&openid='.$openid.'&lang=zh_CN';
+                        $user_file = file_get_contents($url);
+                        $user_code = json_decode($user_file,true);
+                        $data = [
+                            'openid' => $user_code['openid'],
+                            'nickname' => $user_code['nickname'],
+                            'sex' => $user_code['sex'],
+                            'country' => $user_code['country'],
+                            'headimgurl' => $user_code['headimgurl'],
+                            'subscribe_time' => $user_code['subscribe_time'],
+                        ];
+                        $res = Wxuser::insertGetId($data);
+                        $Content ="关注成功";
+                        $result = $this->infocodl($data,$Content);
+                        return $result;
+                    }
                 }
+            }
+            // 回复天气
+            $arr = ['天气','天气。','天气,'];
+            if($data->Content==$arr[array_rand($arr)]){
+                $content = $this->Weater();
+                $result = $this->infocodl($data,$content);
+                return $result;
             }
         }else{
             echo "";
@@ -138,26 +166,26 @@ class TestController extends Controller
                 ],
                 [
                     'type' => 'click',
-                    'name' => 'card',
+                    'name' => '签到',
                     'key' => 'wx_key_0002'
                 ],[
-                    'name' => 'put',
+                    'name' => '发图',
                     'sub_button' => [
                         [
                             'type' => 'pic_sysphoto',
-                            'name' => 'sysphoto',
+                            'name' => '照片',
                             'key' => 'rselfmenu_1_0',
                             "sub_button" => [ ]
                         ],
                         [
                             "type" => "pic_photo_or_album",
-                            "name" => "album",
+                            "name" => "相册",
                             "key" => "rselfmenu_1_1",
                             "sub_button" => [ ]
                         ],
                         [
                             "type" => "pic_weixin",
-                            "name" => "weixin",
+                            "name" => "微信",
                             "key" => "rselfmenu_1_2",
                             "sub_button" => [ ]
                         ]
@@ -166,7 +194,7 @@ class TestController extends Controller
             ]
 
         ];
-        $menu = json_encode($menu);
+        $menu = json_encode($menu,JSON_UNESCAPED_UNICODE);
         $access_token = $this->getAccessToken();
         $url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=".$access_token;
         $client = new Client();
@@ -188,5 +216,32 @@ class TestController extends Controller
         $rea = implode(',',$rea);
         return $rea;
     }
+
+//    public function ccc(){
+//        $openid = 'o0c0h6DlowAw8LLOeLn12ln9EPUc';
+//        $u = Wxuser::where('openid',$openid)->first();
+//        if($u){
+//            echo "欢迎再次关注";
+//        }else{
+//            $token = $this->getAccessToken();
+//            $url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$token.'&openid='.$openid.'&lang=zh_CN';
+//            $user_file = file_get_contents($url);
+//            $user_code = json_decode($user_file,true);
+//            dd($user_code);
+//            $data = [
+//                'openid' => $user_code['openid'],
+//                'nickname' => $user_code['nickname'],
+//                'sex' => $user_code['sex'],
+//                'country' => $user_code['country'],
+//                'headimgurl' => $user_code['headimgurl'],
+//                'subscribe_time' => $user_code['subscribe_time'],
+//            ];
+//            $res = Wxuser::insertGetId($data);
+//            echo "关注成功";
+//        }
+//
+//
+//
+//    }
 
 }

@@ -21,5 +21,5 @@ Route::get("getaccess","TestController@getAccessToken");
 Route::any("/test","TestController@wxEvent");
 Route::any("/menu","TestController@Menu");
 Route::any("/weater","TestController@Weater");
-
+Route::any("/imageHandler","TestController@imageHandler");
 

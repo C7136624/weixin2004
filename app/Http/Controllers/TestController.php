@@ -139,10 +139,69 @@ class TestController extends Controller
 
     //菜单点击事件
     public function clickHandler(){
+        $event_key = $this->xml_obj->EventKey;      //菜单 click key
+        echo $event_key;
 
+        switch ($event_key){
+            case 'checkin' :
+                // TODO 签到逻辑
+                break;
+
+            case 'weather':
+                // TODO 获取天气
+                break;
+
+            default:
+                // TODO 默认
+                break;
+        }
+
+        echo "";
     }
 
 
+    //处理文本消息
+    protected function textHandler()
+    {
+        echo '<pre>';print_r($this->xml_obj);echo '</pre>';
+        $data = [
+            'open_id'       => $this->xml_obj->FromUserName,
+            'msg_type'      => $this->xml_obj->MsgType,
+            'msg_id'        => $this->xml_obj->MsgId,
+            'create_time'   => $this->xml_obj->CreateTime,
+        ];
+
+        //入库
+        WxMediaModel::insertGetId($data);
+
+    }
+
+    //处理图片消息
+    protected function  imageHandler(){
+        //下载素材
+        $token = $this->getAccessToken();
+        $media_id = $this->xml_obj->MedIa;
+        $url = 'https://api.weixin.qq.com/cgi-bin/media/get?access_token='.$token.'&media_id='.$media_id;
+        dd($url);
+        $img = file_get_contents($url);
+        $media_path = 'upload/cat.jpg';
+        $res = file_get_contents($media_path,$img);
+        if ($res){
+            //TODO 保存成功
+        }else{
+            //TODO 保存失败
+        }
+        //入库
+        $info = [
+            'media_id'  => $media_id,
+            'openid'   => $this->xml_obj->FromUserName,
+            'type'  => $this->xml_obj->MsgType,
+            'msg_id'  => $this->xml_obj->MsgId,
+            'create_at'  => $this->xml_obj->CreateTime,
+            'media_path'    => $media_path
+        ];
+        WxMediaModel::insertGetId($info);
+    }
 
     //封装回复方法
     public function infocodl($Content)
@@ -251,32 +310,6 @@ class TestController extends Controller
         return $rea;
     }
 
-//    public function ccc(){
-//        $openid = 'o0c0h6DlowAw8LLOeLn12ln9EPUc';
-//        $u = Wxuser::where('openid',$openid)->first();
-//        if($u){
-//            echo "欢迎再次关注";
-//        }else{
-//            $token = $this->getAccessToken();
-//            $url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$token.'&openid='.$openid.'&lang=zh_CN';
-//            $user_file = file_get_contents($url);
-//            $user_code = json_decode($user_file,true);
-//            dd($user_code);
-//            $data = [
-//                'openid' => $user_code['openid'],
-//                'nickname' => $user_code['nickname'],
-//                'sex' => $user_code['sex'],
-//                'country' => $user_code['country'],
-//                'headimgurl' => $user_code['headimgurl'],
-//                'subscribe_time' => $user_code['subscribe_time'],
-//            ];
-//            $res = Wxuser::insertGetId($data);
-//            echo "关注成功";
-//        }
-//
-//
-//
-//    }
 
 
     public function getWxUserInfo()

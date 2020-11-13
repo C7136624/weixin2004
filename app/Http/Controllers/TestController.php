@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use GuzzleHttp\Client;
 use App\Wxuser;
+use App\WxMediaModel;
 
 class TestController extends Controller
 {

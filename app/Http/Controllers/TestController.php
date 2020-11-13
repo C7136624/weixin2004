@@ -171,9 +171,7 @@ class TestController extends Controller
             'msg_id'        => $this->xml_obj->MsgId,
             'create_time'   => $this->xml_obj->CreateTime,
         ];
-
-        //入库
-        WxMediaModel::insertGetId($data);
+        
 
     }
 

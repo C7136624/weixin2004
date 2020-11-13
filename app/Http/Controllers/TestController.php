@@ -183,10 +183,9 @@ class TestController extends Controller
         $token = $this->getAccessToken();
         $media_id = $this->xml_obj->MedId;
         $url = 'https://api.weixin.qq.com/cgi-bin/media/get?access_token='.$token.'&media_id='.$media_id;
-        dd($url);
         $img = file_get_contents($url);
         $media_path = 'upload/'.$this->xml_obj->MedId.'.jpg';
-        $res = file_get_contents($media_path,$img);
+        $res = file_put_contents($media_path,$img);
         if ($res){
             //TODO 保存成功
         }else{

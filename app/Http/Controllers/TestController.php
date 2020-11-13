@@ -197,7 +197,7 @@ class TestController extends Controller
             'openid'   => $this->xml_obj->FromUserName,
             'type'  => $this->xml_obj->MsgType,
             'msg_id'  => $this->xml_obj->MsgId,
-            'create_at'  => $this->xml_obj->CreateTime,
+            'created_at'  => $this->xml_obj->CreateTime,
             'media_path'    => $media_path
         ];
         WxMediaModel::insertGetId($info);

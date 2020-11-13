@@ -20,7 +20,7 @@ Route::any("index","TestController@index");
 Route::get("getaccess","TestController@getAccessToken");
 Route::any("/test","TestController@wxEvent");
 Route::any("/menu","TestController@Menu");
-Route::any("/weater","TestController@Weater");
+Route::any("/weather","TestController@Weater");
 Route::any("/weather","TestController@weather");
 
 Route::any("/clickHandler","TestController@clickHandler");

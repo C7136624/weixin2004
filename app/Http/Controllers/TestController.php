@@ -79,7 +79,7 @@ class TestController extends Controller
                     exit;
                 }elseif($obj->Event=='CLICK')          // 菜单点击事件
                 {
-                    if(strtolower($obj->EventKey) == 'wx_key_weather'){
+                    if(strtolower($obj->EventKey) == 'weather'){
                         $content = $this->weather();
                         echo    $this->infocodl($content);die;
                     }
@@ -177,9 +177,9 @@ class TestController extends Controller
         $menu = [
             'button' => [
                 [
-                    'type' => 'view',
+                    'type' => 'click',
                     'name' => '天气',
-                    'url' => 'http://2004wlc.wx.comcto.com/weater'
+                    'key' => 'weather'
                 ],
                 [
                     'type' => 'click',

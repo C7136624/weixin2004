@@ -117,6 +117,7 @@ class TestController extends Controller
 
             case 'text' :           //处理文本信息
                 $this->textHandler();
+                return true;
                 break;
 
             case 'image' :          // 处理图片信息
@@ -164,14 +165,14 @@ class TestController extends Controller
     //处理文本消息
     protected function textHandler()
     {
-        echo '<pre>';print_r($this->xml_obj);echo '</pre>';
+//        echo '<pre>';print_r($this->xml_obj);echo '</pre>';
         $data = [
             'open_id'       => $this->xml_obj->FromUserName,
             'msg_type'      => $this->xml_obj->MsgType,
             'msg_id'        => $this->xml_obj->MsgId,
             'create_time'   => $this->xml_obj->CreateTime,
         ];
-        
+
 
     }
 

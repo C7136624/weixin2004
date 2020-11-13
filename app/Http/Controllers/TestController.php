@@ -145,10 +145,10 @@ class TestController extends Controller
 
 
     //封装回复方法
-    public function infocodl($postarray,$Content)
+    public function infocodl($Content)
     {
-        $ToUserName=$postarray->FromUserName;//接收对方账号
-        $FromUserName=$postarray->ToUserName;//接收开发者微信
+        $ToUserName=$this->xml_obj->FromUserName;       // openid
+        $FromUserName=$this->xml_obj->ToUserName;
 //        file_put_contents('log.logs',$ToUserName);
 
         $time=time();//接受时间
@@ -238,7 +238,7 @@ class TestController extends Controller
             WxUser::insertGetId($user_info);
             $content = "欢迎关注 现在时间是：" . date("Y-m-d H:i:s");
         }
-        echo   $this->infocodl();
+        echo   $this->infocodl($content);
     }
 
     public function Weater(){

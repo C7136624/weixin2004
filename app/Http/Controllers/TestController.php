@@ -9,6 +9,9 @@ use App\Wxuser;
 
 class TestController extends Controller
 {
+
+    protected $xml_obj;
+
     private function index()
     {
         $signature = $_GET["signature"];
@@ -70,73 +73,77 @@ class TestController extends Controller
             Redis::set($key,$token);
             Redis::expire($key,5);
         }
-
-
         return $token;
-
-
     }
+
 
 
     public function wxEvent()
     {
-        $signature = request()->get("signature");
-        $timestamp = request()->get("timestamp");
-        $nonce = request()->get("nonce");
+        $xml_str = file_get_contents("php://input");
 
-        $token = "woainimen";
-        $tmpArr = array($token, $timestamp, $nonce);
-        sort($tmpArr, SORT_STRING);
-        $tmpStr = implode( $tmpArr );
-        $tmpStr = sha1( $tmpStr);
+        // 记录日志
+        $log_str = date('Y-m-d H:i:s') . ' >>>>>  ' . $xml_str ." \n\n";
+        file_put_contents('wx_event.log',$log_str,FILE_APPEND);
 
+        $obj = simplexml_load_string($xml_str);//将文件转换成 对象
+        $this->xml_obj = $obj;
 
-        if( $tmpStr == $signature ){
-            //接受数据
-            $xml_data=file_get_contents('php://input');
-//            file_put_contents('wx_event.log',$xml_data);
-            $data=simplexml_load_string($xml_data);
-            if ($data->MsgType=='event'){
-                if ($data->Event=='subscribe'){
-                    $openid=$data->FromUserName;//接收对方账号
-                    $u = Wxuser::where('openid',$openid)->first();
-                    if($u){
-                        $Content ="欢迎回来";
+        $msg_type = $obj->MsgType;      //推送事件的消息类型
+        switch($msg_type)
+        {
+            case 'event' :
 
-                    }else{
-                        $token = $this->getAccessToken();
-                        $url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$token.'&openid='.$openid.'&lang=zh_CN';
-                        $user_file = file_get_contents($url);
-                        $user_code = json_decode($user_file,true);
-                        $data = [
-                            'openid' => $user_code['openid'],
-                            'nickname' => $user_code['nickname'],
-                            'sex' => $user_code['sex'],
-                            'country' => $user_code['country'],
-                            'headimgurl' => $user_code['headimgurl'],
-                            'subscribe_time' => $user_code['subscribe_time'],
-                        ];
-                        $res = Wxuser::insertGetId($data);
-                        $Content ="关注成功";
-
-                    }
-                    $result = $this->infocodl($data,$Content);
-                    return $result;
+                if($obj->Event=='subscribe')        // subscribe 扫码关注
+                {
+                    echo $this->subscribe();
+                    exit;
+                }elseif($obj->Event=='unsubscribe')     // // unsubscribe 取消关注
+                {
+                    echo "";
+                    exit;
+                }elseif($obj->Event=='CLICK')          // 菜单点击事件
+                {
+                    $this->clickHandler();
+                    // TODO
+                }elseif($obj->Event=='VIEW')            // 菜单 view点击 事件
+                {
+                    // TODO
                 }
-            }
-            // 回复天气
-            $arr = ['天气','天气。','天气,'];
-            if($data->Content==$arr[array_rand($arr)]){
-                $content = $this->Weater();
-                $result = $this->infocodl($data,$content);
-                return $result;
-            }
-        }else{
-            echo "";
+
+
+                break;
+
+            case 'text' :           //处理文本信息
+                $this->textHandler();
+                break;
+
+            case 'image' :          // 处理图片信息
+                $this->imageHandler();
+                break;
+
+            case 'voice' :          // 语音
+                $this->voiceHandler();
+                break;
+            case 'video' :          // 视频
+                $this->videoHandler();
+                break;
+
+            default:
+                echo 'default';
         }
 
+        echo "";
 
     }
+
+    //菜单点击事件
+    public function clickHandler(){
+
+    }
+
+
+
     //封装回复方法
     public function infocodl($postarray,$Content)
     {
@@ -207,6 +214,33 @@ class TestController extends Controller
 
     }
 
+    public function  subscribe(){
+        $ToUserName=$this->xml_obj->FromUserName;       // openid
+        $FromUserName=$this->xml_obj->ToUserName;
+        //检查用户是否存在
+        $u = Wxuser::where(['openid'=>$ToUserName])->first();
+        if($u){
+            // TODO 用户存在
+            $content = "欢迎回来 现在时间是：" . date("Y-m-d H:i:s");
+        }else{
+            //获取用户信息，并入库
+            $user_info = $this->getWxUserInfo();
+
+            //入库
+            unset($user_info['subscribe']);
+            unset($user_info['remark']);
+            unset($user_info['groupid']);
+            unset($user_info['substagid_listcribe']);
+            unset($user_info['qr_scene']);
+            unset($user_info['qr_scene_str']);
+            unset($user_info['tagid_list']);
+
+            WxUserModel::insertGetId($user_info);
+            $content = "欢迎关注 现在时间是：" . date("Y-m-d H:i:s");
+        }
+
+    }
+
     public function Weater(){
         $key = "577cef88286449eb9a5010194e9a2473";
         $url = "https://devapi.qweather.com/v7/weather/now?location=101010100&key=$key&gzip=n";
@@ -243,5 +277,21 @@ class TestController extends Controller
 //
 //
 //    }
+
+
+    public function getWxUserInfo()
+    {
+
+        $token = $this->getAccessToken();
+        $openid = $this->xml_obj->FromUserName;
+        $url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$token.'&openid='.$openid.'&lang=zh_CN';
+
+        //请求接口
+        $client = new Client();
+        $response = $client->request('GET',$url,[
+            'verify'    => false
+        ]);
+        return  json_decode($response->getBody(),true);
+    }
 
 }

@@ -238,7 +238,7 @@ class TestController extends Controller
             WxUser::insertGetId($user_info);
             $content = "欢迎关注 现在时间是：" . date("Y-m-d H:i:s");
         }
-        return    $this->infocodl();
+        echo   $this->infocodl();
     }
 
     public function Weater(){

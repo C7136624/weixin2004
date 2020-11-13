@@ -235,7 +235,7 @@ class TestController extends Controller
             unset($user_info['qr_scene_str']);
             unset($user_info['tagid_list']);
 
-            WxUserModel::insertGetId($user_info);
+            WxUser::insertGetId($user_info);
             $content = "欢迎关注 现在时间是：" . date("Y-m-d H:i:s");
         }
 

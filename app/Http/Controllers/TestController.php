@@ -89,7 +89,6 @@ class TestController extends Controller
 
         $obj = simplexml_load_string($xml_str);//将文件转换成 对象
         $this->xml_obj = $obj;
-
         $msg_type = $obj->MsgType;      //推送事件的消息类型
         switch($msg_type)
         {
@@ -116,8 +115,6 @@ class TestController extends Controller
                 break;
 
             case 'text' :           //处理文本信息
-                $this->textHandler();
-                return true;
                 break;
 
             case 'image' :          // 处理图片信息
@@ -132,7 +129,7 @@ class TestController extends Controller
                 break;
 
             default:
-                echo 'default';
+                echo '';
         }
 
         echo "";

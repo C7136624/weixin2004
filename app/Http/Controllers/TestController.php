@@ -181,10 +181,10 @@ class TestController extends Controller
     protected function  imageHandler(){
         //下载素材
         $token = $this->getAccessToken();
-        $media_id = $this->xml_obj->MedId;
+        $media_id = $this->xml_obj->MediaId;
         $url = 'https://api.weixin.qq.com/cgi-bin/media/get?access_token='.$token.'&media_id='.$media_id;
         $img = file_get_contents($url);
-        $media_path = 'upload/'.$this->xml_obj->MedId.'.jpg';
+        $media_path = 'upload/'.$this->xml_obj->MediaId.'.jpg';
         $res = file_put_contents($media_path,$img);
         if ($res){
             //TODO 保存成功

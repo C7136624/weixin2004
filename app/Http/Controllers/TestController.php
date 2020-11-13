@@ -33,31 +33,6 @@ class TestController extends Controller
 
     }
 
-    //调用接口方法
-    public function curl($url,$header="",$content=[]){
-        $ch = curl_init(); //初始化CURL句柄
-        if(substr($url,0,5)=="https"){
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,2);
-        }
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER,true); //字符串类型打印
-        curl_setopt($ch, CURLOPT_URL, $url); //设置请求的URL
-        if(!empty($header)){
-            curl_setopt ($ch, CURLOPT_HTTPHEADER,$header);
-        }
-        if($content){
-            curl_setopt ($ch, CURLOPT_POST,true);
-            curl_setopt ($ch, CURLOPT_POSTFIELDS,$content);
-        }
-        //执行
-        $output = curl_exec($ch);
-        if($error=curl_error($ch)){
-            die($error);
-        }
-        //关闭
-        curl_close($ch);
-        return $output;
-    }
 
     //获取access_token
     public function getAccessToken(){
@@ -104,7 +79,11 @@ class TestController extends Controller
                     exit;
                 }elseif($obj->Event=='CLICK')          // 菜单点击事件
                 {
-                    $this->clickHandler();
+                    if(strtolower($obj->EventKey) == 'wx_key_weather'){
+                        $content = $this->weather();
+                        echo    $this->infocodl($content);die;
+                    }
+
                     // TODO
                 }elseif($obj->Event=='VIEW')            // 菜单 view点击 事件
                 {
@@ -136,42 +115,18 @@ class TestController extends Controller
 
     }
 
-    //菜单点击事件
-    public function clickHandler(){
-        $event_key = $this->xml_obj->EventKey;      //菜单 click key
-        echo $event_key;
-
-        switch ($event_key){
-            case 'checkin' :
-                // TODO 签到逻辑
-                break;
-
-            case 'weather':
-                // TODO 获取天气
-                break;
-
-            default:
-                // TODO 默认
-                break;
-        }
-
-        echo "";
+    //获取天气
+    public function weather(){
+        $url = "https://devapi.qweather.com/v7/weather/now?location=101010100&key=3b20b6ae1ba348c4afdc9545926f1694&gzip=n";
+//        dd($url);
+        $red = $this->curl($url);
+        $red = json_decode($red,true);
+        $rea = $red['now'];
+        $data = "时间:".$rea['obsTime']."天气:".$rea['text']."地区:北京"."风向:".$rea['windDir'];
+        return    $data;
     }
 
 
-    //处理文本消息
-    protected function textHandler()
-    {
-//        echo '<pre>';print_r($this->xml_obj);echo '</pre>';
-        $data = [
-            'open_id'       => $this->xml_obj->FromUserName,
-            'msg_type'      => $this->xml_obj->MsgType,
-            'msg_id'        => $this->xml_obj->MsgId,
-            'create_time'   => $this->xml_obj->CreateTime,
-        ];
-
-
-    }
 
     //处理图片消息
     protected function  imageHandler(){
@@ -296,16 +251,6 @@ class TestController extends Controller
         echo   $this->infocodl($content);
     }
 
-    public function Weater(){
-        $key = "577cef88286449eb9a5010194e9a2473";
-        $url = "https://devapi.qweather.com/v7/weather/now?location=101010100&key=$key&gzip=n";
-        $red = $this->curl($url);
-        $red = json_decode($red,true);
-        $rea = $red['now'];
-        $rea = implode(',',$rea);
-        return $rea;
-    }
-
 
 
     public function getWxUserInfo()
@@ -321,6 +266,32 @@ class TestController extends Controller
             'verify'    => false
         ]);
         return  json_decode($response->getBody(),true);
+    }
+
+    //调用接口方法
+    public function curl($url,$header="",$content=[]){
+        $ch = curl_init(); //初始化CURL句柄
+        if(substr($url,0,5)=="https"){
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST,2);
+        }
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,true); //字符串类型打印
+        curl_setopt($ch, CURLOPT_URL, $url); //设置请求的URL
+        if(!empty($header)){
+            curl_setopt ($ch, CURLOPT_HTTPHEADER,$header);
+        }
+        if($content){
+            curl_setopt ($ch, CURLOPT_POST,true);
+            curl_setopt ($ch, CURLOPT_POSTFIELDS,$content);
+        }
+        //执行
+        $output = curl_exec($ch);
+        if($error=curl_error($ch)){
+            die($error);
+        }
+        //关闭
+        curl_close($ch);
+        return $output;
     }
 
 }

@@ -83,7 +83,7 @@ class TestController extends Controller
                         $content = $this->weather();
                         echo    $this->infocodl($content);die;
                     }
-                    if ($obj->EventKey == 'checkin') {
+                    if ($obj->EventKey == 'wx_key_0002') {
                         $key = 'wx_key_0002' . date('Y_m_d', time());
                         $content = '签到成功';
                         $user_sign_info = Redis::zrange($key, 0, -1);

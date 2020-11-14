@@ -83,7 +83,18 @@ class TestController extends Controller
                         $content = $this->weather();
                         echo    $this->infocodl($content);die;
                     }
-
+                    if ($obj->EventKey == 'checkin') {
+                        $key = 'wx_key_0002' . date('Y_m_d', time());
+                        $content = '签到成功';
+                        $user_sign_info = Redis::zrange($key, 0, -1);
+                        if(in_array((string)$this->xml_obj->FromUserName,$user_sign_info)){
+                            $content='已经签到，不可重复签到';
+                        }else{
+                            Redis::zadd($key,time(),(string)$this->xml_obj->FromUserName);
+                        }
+                        $result= $this->infocodl($content);
+                        return $result;
+                    }
                     // TODO
                 }elseif($obj->Event=='VIEW')            // 菜单 view点击 事件
                 {

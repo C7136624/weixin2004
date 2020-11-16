@@ -184,9 +184,15 @@ class TestController extends Controller
         return sprintf($ret,$ToUserName,$FromUserName,$time,$text,$Content);
     }
 
+    //自定义菜单
     public function Menu(){
         $menu = [
             'button' => [
+                [
+                    'type' => 'view',
+                    'name' => '商城',
+                    'url' => 'http://jd2004.csazam.top/'
+                ],
                 [
                     'type' => 'click',
                     'name' => '天气',
@@ -196,31 +202,8 @@ class TestController extends Controller
                     'type' => 'click',
                     'name' => '签到',
                     'key' => 'wx_key_0002'
-                ],[
-                    'name' => '发图',
-                    'sub_button' => [
-                        [
-                            'type' => 'pic_sysphoto',
-                            'name' => '照片',
-                            'key' => 'rselfmenu_1_0',
-                            "sub_button" => [ ]
-                        ],
-                        [
-                            "type" => "pic_photo_or_album",
-                            "name" => "相册",
-                            "key" => "rselfmenu_1_1",
-                            "sub_button" => [ ]
-                        ],
-                        [
-                            "type" => "pic_weixin",
-                            "name" => "微信",
-                            "key" => "rselfmenu_1_2",
-                            "sub_button" => [ ]
-                        ]
-                    ]
                 ]
             ]
-
         ];
         $menu = json_encode($menu,JSON_UNESCAPED_UNICODE);
         $access_token = $this->getAccessToken();

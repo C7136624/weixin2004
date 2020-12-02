@@ -22,7 +22,7 @@ Route::any("/test","TestController@wxEvent");
 Route::any("/menu","TestController@Menu");
 Route::any("/weather","TestController@Weater");
 Route::any("/weather","TestController@weather");
-Route::any("/change","TestController@change");
+Route::any("/fanyi","TestController@fanyi");
 
 Route::any("/clickHandler","TestController@clickHandler");
 

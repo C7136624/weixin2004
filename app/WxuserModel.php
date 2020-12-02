@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Wxuser extends Model
+class WxuserModel extends Model
 {
     //
     protected $table = 'p_wx_users';

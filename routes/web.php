@@ -22,16 +22,17 @@ Route::any("/test","TestController@wxEvent");
 Route::any("/menu","TestController@Menu");
 Route::any("/weather","TestController@Weater");
 Route::any("/weather","TestController@weather");
+Route::any("/change","TestController@change");
 
 Route::any("/clickHandler","TestController@clickHandler");
 
 
-//
+//小程序
 Route::any("/test","ApiController@test");
-Route::get("/onlogin","ApiController@onlogin");
+Route::any("/onlogin","ApiController@homeLogin");
 Route::get("/goods","ApiController@goods");
 Route::get("/goodsinfo","ApiController@goodsinfo");
-Route::get("/user-login","ApiController@userlogin");
-Route::get("/add-cart","ApiController@addcart");
+Route::any("/user-login","ApiController@userlogin");
+Route::get("/add_cart","ApiController@add_cart")->middleware('check.token');
 
 

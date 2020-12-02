@@ -20,7 +20,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="69cd56ff-713e-49ea-85eb-18aa31927208" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/CartModel.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/GzhController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Middleware/CheckToken.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/XcxUserModel.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/XcxWxUserModel.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ApiController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ApiController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/TestController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/TestController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Kernel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/VerifyCsrfToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/VerifyCsrfToken.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Wxuser.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/WxuserModel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/home.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/home.html" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -180,7 +192,7 @@
       <workItem from="1604624177394" duration="6598000" />
       <workItem from="1604713319697" duration="3848000" />
       <workItem from="1604736339180" duration="62467000" />
-      <workItem from="1605697698065" duration="12682000" />
+      <workItem from="1605697698065" duration="32217000" />
     </task>
     <servers />
   </component>
@@ -200,6 +212,10 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="493" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1606715444480">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="493" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1440.900@0.0.1440.900" timestamp="1606715444480" />
     <state x="539" y="380" key="NewPhpFileDialog" timestamp="1605264172816">
       <screen x="0" y="0" width="1440" height="900" />
     </state>

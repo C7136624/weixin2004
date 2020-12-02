@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use GuzzleHttp\Client;
-use App\Wxuser;
+use App\WxuserModel;
 use App\WxMediaModel;
 
 class TestController extends Controller
@@ -13,6 +13,7 @@ class TestController extends Controller
 
     protected $xml_obj;
 
+    //接入微信
     private function index()
     {
         $signature = $_GET["signature"];
@@ -25,8 +26,10 @@ class TestController extends Controller
         $tmpStr = sha1( $tmpStr );
 
         if( $tmpStr == $signature ){
+            echo "";
             return true;
         }else{
+            echo "";
             return false;
         }
 
@@ -53,7 +56,7 @@ class TestController extends Controller
     }
 
 
-
+    //微信推送消息
     public function wxEvent()
     {
         $xml_str = file_get_contents("php://input");
@@ -101,7 +104,15 @@ class TestController extends Controller
                     // TODO
                 }
 
-
+                //文本回复
+                if(strtolower($obj->MsgType) == "text") {
+                    if (preg_match("/([\x81-\xfe][\x40-\xfe])/", strtolower($obj->Content), $match)) {
+                        $text = strtolower($obj->Content);
+                        $content = $this->fanyi($text);
+                        echo $this->response($content['newslist']['0']['pinyin']);
+                        die;
+                    }
+                }
                 break;
 
             case 'text' :           //处理文本信息
@@ -138,7 +149,6 @@ class TestController extends Controller
     }
 
 
-
     //处理图片消息
     protected function  imageHandler(){
         //下载素材
@@ -166,22 +176,19 @@ class TestController extends Controller
     }
 
     //封装回复方法
-    public function infocodl($Content)
-    {
-        $ToUserName=$this->xml_obj->FromUserName;       // openid
-        $FromUserName=$this->xml_obj->ToUserName;
-//        file_put_contents('log.logs',$ToUserName);
-
-        $time=time();//接受时间
-        $text='text';//数据类型
-        $ret="<xml>
-                <ToUserName><![CDATA[%s]]></ToUserName>
-                <FromUserName><![CDATA[%s]]></FromUserName>
-                <CreateTime>%s</CreateTime>
-                <MsgType><![CDATA[%s]]></MsgType>
-                <Content><![CDATA[%s]]></Content>
-            </xml>";
-        return sprintf($ret,$ToUserName,$FromUserName,$time,$text,$Content);
+    public function response($content){
+        $fromUserName=$this->str_obj->ToUserName;
+        $toUserName=$this->str_obj->FromUserName;
+        $time=time();
+        $msgType="text";
+        $xml="<xml>
+                   <ToUserName><![CDATA[%s]]></ToUserName>
+                   <FromUserName><![CDATA[%s]]></FromUserName>
+                   <CreateTime>%s</CreateTime>
+                   <MsgType><![CDATA[%s]]></MsgType>
+                   <Content><![CDATA[%s]]></Content>
+                   </xml>";//发送//来自//时间//类型//内容
+        return sprintf($xml,$toUserName,$fromUserName,$time,$msgType,$content);
     }
 
     //自定义菜单
@@ -218,11 +225,12 @@ class TestController extends Controller
 
     }
 
+    //关注用户信息入库
     public function  subscribe(){
         $ToUserName=$this->xml_obj->FromUserName;       // openid
         $FromUserName=$this->xml_obj->ToUserName;
         //检查用户是否存在
-        $u = Wxuser::where(['openid'=>$ToUserName])->first();
+        $u = WxuserModel::where(['openid'=>$ToUserName])->first();
         if($u){
             // TODO 用户存在
             $content = "欢迎回来 现在时间是：" . date("Y-m-d H:i:s");
@@ -239,14 +247,14 @@ class TestController extends Controller
             unset($user_info['qr_scene_str']);
             unset($user_info['tagid_list']);
 
-            WxUser::insertGetId($user_info);
+            WxuserModel::insertGetId($user_info);
             $content = "欢迎关注 现在时间是：" . date("Y-m-d H:i:s");
         }
         echo   $this->infocodl($content);
     }
 
 
-
+    //获取微信用户信息
     public function getWxUserInfo()
     {
 
@@ -287,5 +295,15 @@ class TestController extends Controller
         curl_close($ch);
         return $output;
     }
+
+    //翻译接口
+    public function fanyi($text){
+        $url = 'http://api.tianapi.com/txapi/pinyin/index?key=727f365f887584d5a4d14c685b2b4e5e&text='.$text;
+        $get = file_get_contents($url);
+        $json = json_decode($get,true);
+        return $json;
+    }
+
+     
 
 }

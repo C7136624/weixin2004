@@ -11,7 +11,7 @@ use App\WxMediaModel;
 class TestController extends Controller
 {
 
-    protected $xml_obj;
+    protected $str_obj;
 
     //接入微信
     private function index()
@@ -56,85 +56,29 @@ class TestController extends Controller
     }
 
 
-    //微信推送消息
+    /*
+      * 接受微信推送事件
+     */
     public function wxEvent()
     {
+        //接受数据
         $xml_str = file_get_contents("php://input");
 
-        // 记录日志
-        $log_str = date('Y-m-d H:i:s') . ' >>>>>  ' . $xml_str ." \n\n";
-        file_put_contents('wx_event.log',$log_str,FILE_APPEND);
+        //记录日志
+        file_put_contents("wx_event.log", $xml_str);
 
-        $obj = simplexml_load_string($xml_str);//将文件转换成 对象
-        $this->xml_obj = $obj;
-        $msg_type = $obj->MsgType;      //推送事件的消息类型
-        switch($msg_type)
-        {
-            case 'event' :
-
-                if($obj->Event=='subscribe')        // subscribe 扫码关注
-                {
-                    echo $this->subscribe();
-                    exit;
-                }elseif($obj->Event=='unsubscribe')     // // unsubscribe 取消关注
-                {
-                    echo "";
-                    exit;
-                }elseif($obj->Event=='CLICK')          // 菜单点击事件
-                {
-                    if(strtolower($obj->EventKey) == 'weather'){
-                        $content = $this->weather();
-                        echo    $this->infocodl($content);die;
-                    }
-                    if ($obj->EventKey == 'wx_key_0002') {
-                        $key = 'wx_key_0002' . date('Y_m_d', time());
-                        $content = '签到成功';
-                        $user_sign_info = Redis::zrange($key, 0, -1);
-                        if(in_array((string)$this->xml_obj->FromUserName,$user_sign_info)){
-                            $content='已经签到，不可重复签到';
-                        }else{
-                            Redis::zadd($key,time(),(string)$this->xml_obj->FromUserName);
-                        }
-                        $result= $this->infocodl($content);
-                        return $result;
-                    }
-                    // TODO
-                }elseif($obj->Event=='VIEW')            // 菜单 view点击 事件
-                {
-                    // TODO
-                }
-
-                //文本回复
-                if(strtolower($obj->MsgType) == "text") {
-                    if (preg_match("/([\x81-\xfe][\x40-\xfe])/", strtolower($obj->Content), $match)) {
-                        $text = strtolower($obj->Content);
-                        $content = $this->fanyi($text);
-                        echo $this->response($content['newslist']['0']['pinyin']);
-                        die;
-                    }
-                }
-                break;
-
-            case 'text' :           //处理文本信息
-                break;
-
-            case 'image' :          // 处理图片信息
-                $this->imageHandler();
-                break;
-
-            case 'voice' :          // 语音
-                $this->voiceHandler();
-                break;
-            case 'video' :          // 视频
-                $this->videoHandler();
-                break;
-
-            default:
-                echo '';
+        $data = simplexml_load_string($xml_str);
+//            print_r($data);die;
+        $this->str_obj = $data;
+        //文本回复
+        if(strtolower($data->MsgType) == "text") {
+            if (preg_match("/([\x81-\xfe][\x40-\xfe])/", strtolower($data->Content), $match)) {
+                $text = strtolower($data->Content);
+                $content = $this->fanyi($text);
+                echo $this->response($content['newslist']['0']['pinyin']);
+                die;
+            }
         }
-
-        echo "";
-
     }
 
     //获取天气
@@ -304,6 +248,6 @@ class TestController extends Controller
         return $json;
     }
 
-     
+
 
 }
